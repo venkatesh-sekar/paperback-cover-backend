@@ -215,3 +215,15 @@ async def upload_blob_to_bucket(
 async def upload_temp_file_to_bucket(blob_data: bytes, suffix: str = "") -> str | None:
     temp_path = "temp/" + str(uuid.uuid4()) + suffix
     return await upload_blob_to_bucket(blob_data, temp_path, {})
+
+
+@timing
+async def delete_blob_from_bucket(path: str) -> None:
+    """
+    Deletes a blob from an S3 bucket.
+
+    Parameters:
+        path (str): The path of the blob to be deleted.
+    """
+    logger.info(f"Deleting blob from bucket: {path}")
+    await uploader.delete_object(path)

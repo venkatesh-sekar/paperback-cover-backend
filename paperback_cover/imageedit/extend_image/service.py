@@ -4,10 +4,11 @@ import uuid
 from io import BytesIO
 
 import httpx
-from fastapi import Depends
+from fastapi import Depends, UploadFile
 from PIL import Image, ImageDraw
 
 from paperback_cover.commons.db import get_async_session
+from paperback_cover.commons.file_validator import validate_image_file
 from paperback_cover.cover_art.replicate_artwork_service import (
     ReplicateArtworkService,
     get_replicate_artwork_service,
@@ -72,28 +73,30 @@ class ExtendImageService:
         self.background_analyser_service = background_analyser_service
 
     async def extend_image(
-        self, request: ExtendImageRequest, user: User
+        self, request: ExtendImageRequest, file: UploadFile, user: User
     ) -> CoverArtSchema | None:
-        logger.info(f"Starting image extension request: {request.dict()}")
+        logger.info(f"Starting image extension request: {request.model_dump()}")
+
+        # First, upload the input image to get a URL for background analysis
+        try:
+            await validate_image_file(file)
+            file_content = await file.read()
+            original_image = Image.open(BytesIO(file_content)).convert("RGBA")
+
+            # Upload the original image to get a URL for background analysis
+            uploaded_image = await self._upload_image_to_storage(original_image)
+            image_url_for_analysis = uploaded_image.image_url
+        except Exception as e:
+            logger.error(f"Failed to process uploaded image: {e}")
+            raise Exception("Failed to process uploaded image") from e
 
         background_prompt = await self.background_analyser_service.anlayse_background(
-            request.image_url
+            image_url_for_analysis
         )
 
         if background_prompt is None:
             logger.error("Failed to analyse background")
             return None
-
-        try:
-
-            image_bytes = await self._download_image(request.image_url)
-            original_image = Image.open(image_bytes).convert("RGBA")
-        except httpx.HTTPStatusError as e:
-            logger.error(f"Failed to download initial image: {e}")
-            raise Exception("Failed to download initial image") from e
-        except Exception as e:
-            logger.error(f"Failed to open initial image: {e}")
-            raise Exception("Failed to process initial image") from e
 
         # --- Text handling ---
         original_image_with_text = original_image.copy()
@@ -102,7 +105,7 @@ class ExtendImageService:
             try:
                 ocr_result: OcrResult = (
                     await self.replicate_artwork_service.detect_text_with_region(
-                        image_url=request.image_url
+                        image_url=image_url_for_analysis
                     )
                 )
                 logger.info(f"Detected {len(ocr_result.regions)} text regions.")
