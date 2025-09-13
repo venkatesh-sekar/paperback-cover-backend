@@ -4,7 +4,7 @@ prod:
       environment: "test_mode"
   postgres:
     user: backend
-    database: athena_cover
+    database: paperback_cover
     port: 5432
   auth:
     expiration: 86400

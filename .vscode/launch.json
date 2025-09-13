@@ -27,7 +27,7 @@
       "module": "alembic",
       "args": ["upgrade", "head"],
       "console": "integratedTerminal",
-      "envFile": "${workspaceFolder}/.envs/prod/.env"
+      "envFile": "${workspaceFolder}/.envs/local/.env"
     },
     {
       "name": "Generate DB revisions (PROD)",
@@ -36,7 +36,7 @@
       "module": "alembic",
       "args": ["revision", "--autogenerate"],
       "console": "integratedTerminal",
-      "envFile": "${workspaceFolder}/.envs/prod/.env"
+      "envFile": "${workspaceFolder}/.envs/local/.env"
     }
   ]
 }
