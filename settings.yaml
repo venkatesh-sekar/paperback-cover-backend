@@ -1,0 +1,64 @@
+default:
+  billing:
+    dodopayments:
+      api_key: "api_key"
+      return_url: "billing"
+      webhook_secret: "webhook_secret"
+      environment: "test_mode"
+  postgres:
+    user: postgres
+    password: postgres
+    database: postgres
+    host: localhost
+    port: 5432
+  auth:
+    secret: secret
+    expiration: 86400
+    oauth:
+      google:
+        client_id: client_id
+        client_secret: client_secret
+        callback_path: /api/auth/google/callback
+  app:
+    api:
+      docs: true
+  ui:
+    base_url: http://localhost:3000
+    api:
+      path:
+        auth_callback: /api/auth/google/callback
+  google:
+    fonts:
+      metadata_file: "data/google_fonts.json"
+      api_key: api_key
+  openai:
+    api_key: "api_key"
+  replicate:
+    api_token: "api_token"
+  storage:
+    r2:
+      token: token
+    cloudflare_images:
+      token: token
+      account_id: account_id
+      public_url: "https://athenacover.com/images"
+    user_generated:
+      r2_token: token
+      access_key: access_key
+      secret_key: secret_key
+      region: auto
+      bucket: bucket
+      endpoint: endpoint
+      public_url: "https://storage.athenacover.com"
+    cover_styles:
+      image_base_path: "images/cover_styles/o" # Original
+    text_effects:
+      image_base_path: "ac/text_effects/o" # Original
+    user_assets:
+      image_base_path: "assets/images"
+    layout_templates:
+      image_base_path: "ac/layout_templates/o" # ac for Athena Cover since all websites use same storage
+    app_assets:
+      image_base_path: "ac/app_assets"
+      font_image_base_path: "ac/app_assets/fonts"
+      font_base_path: "assets/fonts"

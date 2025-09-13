@@ -1,0 +1,18 @@
+prod:
+  billing:
+    dodopayments:
+      environment: "test_mode"
+  postgres:
+    user: backend
+    database: athena_cover
+    port: 5432
+  auth:
+    expiration: 86400
+  app:
+    api:
+      docs: true
+  ui:
+    base_url: http://localhost:3000
+    api:
+      path:
+        auth_callback: /api/auth/google/callback
