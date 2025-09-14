@@ -32,3 +32,10 @@ class UserUpdateResponseSchema(BaseModel):
     class Config:
         from_attributes = True
         populate_by_name = True
+
+
+class UserSchema(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: str
+    credits: int

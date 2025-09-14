@@ -14,7 +14,6 @@ class OutputFormat(str, Enum):
 class ConversionRequest(BaseModel):
     """Generic request schema for image format conversion"""
 
-    book_id: str
     output_format: OutputFormat
     dpi: int = Field(
         default=300, ge=72, le=600, description="DPI for output image/PDF (72-600)"
